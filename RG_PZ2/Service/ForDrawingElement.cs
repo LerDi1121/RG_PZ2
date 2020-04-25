@@ -64,11 +64,11 @@ namespace RG_PZ2.Service
                 (item.X, item.Y) = Common.FindClosestXY(x, y, size);
             }
         }
-        public void DrawElements(MouseButtonEventHandler del)
+      void  DrawSubstation(MouseButtonEventHandler del)
         {
             foreach (var item in substationEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.Red };
+                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.HotPink };
                 element.ToolTip = "ID:" + item.Id + "\nSubstation" + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
 
@@ -76,27 +76,38 @@ namespace RG_PZ2.Service
                 Canvas.SetTop(element, item.Y);
                 MainWindow.CanvasAddDel(element);
             }
-
+        }
+        void DrawNode(MouseButtonEventHandler del)
+        {
             foreach (var item in nodeEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.Blue };
+                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.DeepSkyBlue };
                 element.ToolTip = "ID:" + item.Id + "\nNode " + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
                 Canvas.SetLeft(element, item.X);
                 Canvas.SetTop(element, item.Y);
                 MainWindow.CanvasAddDel(element);
             }
+        }
 
+        void DrawSwithc(MouseButtonEventHandler del)
+        {
             foreach (var item in switchEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.Green };
+                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.ForestGreen };
                 element.ToolTip = "ID: " + item.Id + "\nSwitch " + "\nName: " + item.Name + "\nStatus: " + item.Status;
                 element.MouseLeftButtonDown += del;
                 Canvas.SetLeft(element, item.X);
                 Canvas.SetTop(element, item.Y);
                 MainWindow.CanvasAddDel(element);
             }
+        }
+        public void DrawElements(MouseButtonEventHandler del)
+        {
 
+            DrawSubstation(del);
+            DrawNode(del);
+            DrawSwithc(del);
             /*  foreach (var item in lineEntities)
               {
                   var element = new Line() { Stroke = Brushes.Black };
