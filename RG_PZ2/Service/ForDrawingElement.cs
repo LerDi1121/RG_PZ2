@@ -151,21 +151,43 @@ namespace RG_PZ2.Service
                   var element = new Line() { Stroke = Brushes.Black };
                   (element.X1, element.Y1) = FindElemt(item.FirstEnd);
                   (element.X2, element.Y2) = FindElemt(item.SecondEnd);
-                  if (element.X1 == 0 || element.X2 == 0 || element.Y1 == 0 || element.Y2 == 0)
+                  if (element.X1 == 0 || element.X2 == 0 || element.Y1 == 0 || element.Y2 == 0)//stavljeno zbog problema ili baga, javlja se odredjen broj linija koje krecu iz  gornjeg desnog ugla i spajaju se sa par tacaka
+                    
                   {
                       continue;
                   }
-                  myCanvas.Children.Add(element);
+                //  myCanvas.Children.Add(element);
+               var lines= map.createLine(element.X1, element.Y1, element.X2, element.Y2);
+                if(lines.Count>10 && lines.Count < 15)
+                {
+                    CreateLine(lines, myCanvas);
+                   
+                }
+           
               }
+        }
+        void CreateLine(List<Cell> lines, Canvas myCanvas)
+        {
+
+            for(int i=0; i<lines.Count;i++)
+            {
+                Ellipse temp = new Ellipse() {  Width = 2, Height = 10, Fill = Brushes.Black };
+                Canvas.SetLeft(temp, lines[i].X_Coord);
+                Canvas.SetTop(temp, lines[i].Y_Coord);
+                myCanvas.Children.Add(temp);
+             
+            }
+
+            
         }
       private (double, double) FindElemt(long id)
          {
              return substationEntities.Find((item) => item.Id == id) != null
-               ? (substationEntities.Find((item) => item.Id == id).X + (6 / 2), substationEntities.Find((item) => item.Id == id).Y + (6 / 2))
+               ? (substationEntities.Find((item) => item.Id == id).X , substationEntities.Find((item) => item.Id == id).Y )
                : nodeEntities.Find((item) => item.Id == id) != null
-               ? (nodeEntities.Find((item) => item.Id == id).X + (6 / 2), nodeEntities.Find((item) => item.Id == id).Y + (6 / 2))
+               ? (nodeEntities.Find((item) => item.Id == id).X , nodeEntities.Find((item) => item.Id == id).Y )
                : switchEntities.Find((item) => item.Id == id) != null
-               ? (switchEntities.Find((item) => item.Id == id).X + (6 / 2), switchEntities.Find((item) => item.Id == id).Y + (6 / 2)) : (0, 0);
+               ? (switchEntities.Find((item) => item.Id == id).X , switchEntities.Find((item) => item.Id == id).Y ) : (0, 0);
               }
     }
 }

@@ -66,7 +66,7 @@ namespace RG_PZ2.Service
         {
             for (int y = 0; y < NumY; y++)
             {
-                if (yCoord == cells[0, y].X_Coord)
+                if (yCoord == cells[0, y].Y_Coord)
                 {
                     return y;
                 }
@@ -78,7 +78,7 @@ namespace RG_PZ2.Service
         {
             return (x == End.X && y == End.Y);
         }
-        public void createLine(double StartX, double StartY, double StopX, double StopY)
+        public List<Cell> createLine(double StartX, double StartY, double StopX, double StopY)
         {
             List<Cell> shortest= new List<Cell>();
             Queue<Cell> queue = new Queue<Cell>();
@@ -100,24 +100,53 @@ namespace RG_PZ2.Service
             while(queue.Count>0)
             {
                 Cell tempCell = queue.Dequeue();
-                if(isEnd(tempCell.X, tempCell.X,stopCell))//da li je doslo do kraja
+                if(isEnd(tempCell.X, tempCell.Y,stopCell))//da li je doslo do kraja
                 {
                     complitePath = true;
                     break;
                 }
                 for( int i= 0; i<4;i++)
                 {
-                    int nexRow;
-                    int newColumn;
-                 //   if()
+                    int nextRow= tempCell.X+dr[i];
+                    int nextColumn = tempCell.Y + dc[i];
+                    if(nextRow<0 || nextColumn<0 || nextRow>=NumX|| nextColumn>= NumY)
+                    {
+                        continue;//preskoci ako izadjes van matrice
+                    }
+                    if(previous[nextRow,nextColumn]!=null )
+                    {
+                        continue;//preskoci polja koja si posetio;
+                    }
+                    if(!isEnd(nextRow,nextColumn,stopCell) &&( Cells[nextRow, nextColumn].Space_ == Space.NODE))
+                    {
+                        continue; //ako nije kraj??
+                    }
 
+                    queue.Enqueue(new Cell(nextRow, nextColumn, Cells[nextRow, nextColumn].X_Coord, Cells[nextRow, nextColumn].Y_Coord));
+
+                    previous[nextRow, nextColumn] = tempCell;
                 }
 
 
 
             }
+            if(complitePath)
+            {
+                shortest.Add(stopCell);
+                Cell prev = previous[stopCell.X, stopCell.Y];
+                while (prev.X > 0 && !compareCell(prev, startCell)) {
 
+                    shortest.Add(prev);
+                    prev = previous[prev.X, prev.Y];
+                }
+                shortest.Add(prev);       
+            }
 
+            return shortest;
+        }
+        private bool compareCell(Cell first, Cell sec)
+        {
+            return (first.X == sec.X && first.Y == sec.Y && first.X_Coord == sec.X_Coord && first.Y_Coord ==sec.Y_Coord);
         }
 
     }

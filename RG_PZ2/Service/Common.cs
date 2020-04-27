@@ -112,20 +112,21 @@ namespace RG_PZ2.Service
             {
                 var line = new LineEntity()
                 {
-                    Id = long.Parse(item.SelectSingleNode("Id").InnerText, CultureInfo.InvariantCulture),
+                    Id = long.Parse(item.SelectSingleNode("Id").InnerText),
                     Name = item.SelectSingleNode("Name").InnerText,
                     ConductorMaterial = item.SelectSingleNode("ConductorMaterial").InnerText,
                     LineType = item.SelectSingleNode("LineType").InnerText,
                     IsUnderground = bool.Parse(item.SelectSingleNode("IsUnderground").InnerText),
-                    R = float.Parse(item.SelectSingleNode("R").InnerText, CultureInfo.InvariantCulture),
-                    ThermalConstantHeat = long.Parse(item.SelectSingleNode("ThermalConstantHeat").InnerText, CultureInfo.InvariantCulture),
-                    FirstEnd = long.Parse(item.SelectSingleNode("FirstEnd").InnerText, CultureInfo.InvariantCulture),
-                    SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText, CultureInfo.InvariantCulture)
+                    R = float.Parse(item.SelectSingleNode("R").InnerText),
+
+                    ThermalConstantHeat = long.Parse(item.SelectSingleNode("ThermalConstantHeat").InnerText),
+                    FirstEnd = long.Parse(item.SelectSingleNode("FirstEnd").InnerText),
+                    SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText)
                 };
-                if (entites.Any((ent) => ent.FirstEnd == line.SecondEnd && ent.SecondEnd == line.FirstEnd))
-                {
-                    continue;
-                }
+                //if (entites.Any((ent) => ent.FirstEnd == line.SecondEnd && ent.SecondEnd == line.FirstEnd))
+               // {
+                //    continue;
+               // }
                 entites.Add(line);
             }
         }

@@ -16,8 +16,7 @@
                         <ScaleTransform ScaleX="{Binding ElementName=slider, Path=Value}"
                                 ScaleY="{Binding ElementName=slider, Path=Value}"/>
                     </Canvas.LayoutTransform>
-
-                   
+                 
                     
                 </Canvas>
             </Border>
