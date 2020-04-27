@@ -20,6 +20,7 @@ namespace RG_PZ2.Service
         private List<NodeEntity> nodeEntities = new List<NodeEntity>();
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
         private List<LineEntity> lineEntities = new List<LineEntity>();
+        private Map map;
         private double xScale;
         private double yScale;
         private double size = 10;
@@ -30,8 +31,26 @@ namespace RG_PZ2.Service
             xMin = Math.Min(Math.Min(substationEntities.Min((item) => item.X), nodeEntities.Min((item) => item.X)), switchEntities.Min((item) => item.X));
             yMin = Math.Min(Math.Min(substationEntities.Min((item) => item.Y), nodeEntities.Min((item) => item.Y)), switchEntities.Min((item) => item.Y));
 
-            xScale = width / (Math.Max(Math.Min(substationEntities.Max((item) => item.X), nodeEntities.Max((item) => item.X)), switchEntities.Max((item) => item.X)) - xMin);
-            yScale = height / (Math.Max(Math.Min(substationEntities.Max((item) => item.Y), nodeEntities.Max((item) => item.Y)), switchEntities.Max((item) => item.Y)) - yMin);
+            xScale =( width/2) / (Math.Max(Math.Min(substationEntities.Max((item) => item.X), nodeEntities.Max((item) => item.X)), switchEntities.Max((item) => item.X)) - xMin);
+            yScale =( height /2)/ (Math.Max(Math.Min(substationEntities.Max((item) => item.Y), nodeEntities.Max((item) => item.Y)), switchEntities.Max((item) => item.Y)) - yMin);
+         CreateEmptyMat();
+        }
+        private void CreateEmptyMat()
+        {
+            
+            int counter = 0;
+            map = new Map(401, 401);
+           
+            for (int x=0; x<= 400; x++)
+            {
+                for (int y = 0; y <=400; y++)
+                {
+                        
+                    map.Cells[x,y]= new Cell(x, y, x * size,  y * size,Space.FREE, null);
+                    
+                }
+            }
+
         }
         public void LoadXml()
         {
@@ -43,72 +62,91 @@ namespace RG_PZ2.Service
             Common.AddEntities(switchEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Switches/SwitchEntity"));
             Common.AddEntities(lineEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Lines/LineEntity"));
         }
+        private void AddElementToMap(IEnumerable<PowerEntity> nodeEntities)
+        {
+
+        }
+   
         public void SetCoords(double width, double height)
         {
             foreach (var item in substationEntities)
             {
-                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width);
-                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height);
+                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width/2);
+                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height/2);
+     
                 (item.X, item.Y) = Common.FindClosestXY(x, y, size);
+                map.AddElement(item.X, item.Y, Space.NODE);
+              
+
+
             }
             foreach (var item in nodeEntities)
             {
-                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width);
-                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height);
+                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width / 2);
+                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height / 2);
+           
                 (item.X, item.Y) = Common.FindClosestXY(x, y, size);
+                map.AddElement(item.X, item.Y, Space.NODE);
+
             }
             foreach (var item in switchEntities)
             {
-                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width);
-                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height);
+                double x = Common.ConvertToCanvas(item.X, xScale, xMin, size, width / 2);
+                double y = Common.ConvertToCanvas(item.Y, yScale, yMin, size, height / 2) ;
+
                 (item.X, item.Y) = Common.FindClosestXY(x, y, size);
+                map.AddElement(item.X, item.Y, Space.NODE);
+
             }
+           
         }
-      void  DrawSubstation(MouseButtonEventHandler del)
+      void  DrawSubstation(Canvas myCanvas, MouseButtonEventHandler del)
         {
             foreach (var item in substationEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.HotPink };
+                Ellipse element = new Ellipse() { Width = 6, Height = 6, Fill = Brushes.HotPink };
                 element.ToolTip = "ID:" + item.Id + "\nSubstation" + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
 
                 Canvas.SetLeft(element, item.X);
                 Canvas.SetTop(element, item.Y);
-                MainWindow.CanvasAddDel(element);
+                myCanvas.Children.Add(element);
             }
         }
-        void DrawNode(MouseButtonEventHandler del)
+        void DrawNode(Canvas myCanvas, MouseButtonEventHandler del)
         {
             foreach (var item in nodeEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.DeepSkyBlue };
+                Ellipse element = new Ellipse() { Width = 6, Height = 6, Fill = Brushes.DeepSkyBlue };
                 element.ToolTip = "ID:" + item.Id + "\nNode " + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
+
                 Canvas.SetLeft(element, item.X);
                 Canvas.SetTop(element, item.Y);
-                MainWindow.CanvasAddDel(element);
+                myCanvas.Children.Add(element);
             }
         }
 
-        void DrawSwithc(MouseButtonEventHandler del)
+        void DrawSwithc(Canvas myCanvas, MouseButtonEventHandler del)
         {
             foreach (var item in switchEntities)
             {
-                Ellipse element = new Ellipse() { Width = 5, Height = 5, Fill = Brushes.ForestGreen };
+                Ellipse element = new Ellipse() { Width = 6, Height = 6, Fill = Brushes.ForestGreen };
                 element.ToolTip = "ID: " + item.Id + "\nSwitch " + "\nName: " + item.Name + "\nStatus: " + item.Status;
                 element.MouseLeftButtonDown += del;
+
                 Canvas.SetLeft(element, item.X);
                 Canvas.SetTop(element, item.Y);
-                MainWindow.CanvasAddDel(element);
+                  myCanvas.Children.Add(element);
             }
         }
-        public void DrawElements(MouseButtonEventHandler del)
+        public void DrawElements( Canvas myCanvas, MouseButtonEventHandler del)
         {
 
-            DrawSubstation(del);
-            DrawNode(del);
-            DrawSwithc(del);
-            /*  foreach (var item in lineEntities)
+            DrawSubstation(myCanvas,del);
+            DrawNode(myCanvas,del);
+            DrawSwithc(myCanvas,del);
+              foreach (var item in lineEntities)
               {
                   var element = new Line() { Stroke = Brushes.Black };
                   (element.X1, element.Y1) = FindElemt(item.FirstEnd);
@@ -117,8 +155,17 @@ namespace RG_PZ2.Service
                   {
                       continue;
                   }
-                  canvas.Children.Add(element);
-              }*/
+                  myCanvas.Children.Add(element);
+              }
         }
+      private (double, double) FindElemt(long id)
+         {
+             return substationEntities.Find((item) => item.Id == id) != null
+               ? (substationEntities.Find((item) => item.Id == id).X + (6 / 2), substationEntities.Find((item) => item.Id == id).Y + (6 / 2))
+               : nodeEntities.Find((item) => item.Id == id) != null
+               ? (nodeEntities.Find((item) => item.Id == id).X + (6 / 2), nodeEntities.Find((item) => item.Id == id).Y + (6 / 2))
+               : switchEntities.Find((item) => item.Id == id) != null
+               ? (switchEntities.Find((item) => item.Id == id).X + (6 / 2), switchEntities.Find((item) => item.Id == id).Y + (6 / 2)) : (0, 0);
+              }
     }
 }

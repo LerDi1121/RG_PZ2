@@ -135,7 +135,7 @@ namespace RG_PZ2.Service
             if (!usedCoords.Contains((x, y)))
             {
                 usedCoords.Add((x, y));
-                return (x, y);
+                return (x*2, y*2);//zbog prikaza
             }
 
             double newX = x - size;
@@ -167,7 +167,7 @@ namespace RG_PZ2.Service
 
         WhileExit:
             usedCoords.Add((newX, newY));
-            return (newX, newY);
+            return (newX*2, newY*2);//zbog prikaza
         }
     }
 }
