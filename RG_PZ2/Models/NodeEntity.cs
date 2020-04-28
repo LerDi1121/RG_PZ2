@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace RG_PZ2.Models
 {
@@ -10,9 +11,13 @@ namespace RG_PZ2.Models
     {
         public NodeEntity()
         {
-
+            
+        }
+        public override void SetDefaultColor()
+        {
+            shape.Fill = Brushes.DeepSkyBlue;
         }
 
-     
+
     }
 }

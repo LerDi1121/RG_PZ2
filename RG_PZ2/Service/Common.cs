@@ -123,10 +123,10 @@ namespace RG_PZ2.Service
                     FirstEnd = long.Parse(item.SelectSingleNode("FirstEnd").InnerText),
                     SecondEnd = long.Parse(item.SelectSingleNode("SecondEnd").InnerText)
                 };
-                //if (entites.Any((ent) => ent.FirstEnd == line.SecondEnd && ent.SecondEnd == line.FirstEnd))
-               // {
-                //    continue;
-               // }
+              if (entites.Any((ent) => ent.FirstEnd == line.SecondEnd && ent.SecondEnd == line.FirstEnd))//izbegavanje duplih
+                {
+                  continue;
+               }
                 entites.Add(line);
             }
         }

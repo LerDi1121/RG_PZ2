@@ -15,7 +15,7 @@ namespace RG_PZ2.Service
 {
      public class ForDrawingElement
     {
-       
+        public  static List<PowerEntity> MyPowerEntity { get; set; }       
         private List<SubstationEntity> substationEntities = new List<SubstationEntity>();
         private List<NodeEntity> nodeEntities = new List<NodeEntity>();
         private List<SwitchEntity> switchEntities = new List<SwitchEntity>();
@@ -26,6 +26,11 @@ namespace RG_PZ2.Service
         private double size = 10;
         private double xMin;
         private double yMin;
+        public ForDrawingElement()
+        {
+            MyPowerEntity = new List<PowerEntity>();
+
+        }
         public void SetScale(double width, double height)
         {
             xMin = Math.Min(Math.Min(substationEntities.Min((item) => item.X), nodeEntities.Min((item) => item.X)), switchEntities.Min((item) => item.X));
@@ -35,10 +40,15 @@ namespace RG_PZ2.Service
             yScale =( height /2)/ (Math.Max(Math.Min(substationEntities.Max((item) => item.Y), nodeEntities.Max((item) => item.Y)), switchEntities.Max((item) => item.Y)) - yMin);
          CreateEmptyMat();
         }
+        public  void SetDefault(object sender, EventArgs e)
+        {
+            foreach(var item in MyPowerEntity)
+            {
+                item.SetDefaultColor();
+            }
+        }
         private void CreateEmptyMat()
         {
-            
-            int counter = 0;
             map = new Map(401, 401);
            
             for (int x=0; x<= 400; x++)
@@ -61,12 +71,9 @@ namespace RG_PZ2.Service
             Common.AddEntities(nodeEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Nodes/NodeEntity"));
             Common.AddEntities(switchEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Switches/SwitchEntity"));
             Common.AddEntities(lineEntities, doc.DocumentElement.SelectNodes("/NetworkModel/Lines/LineEntity"));
+         //  sortLine();
         }
-        private void AddElementToMap(IEnumerable<PowerEntity> nodeEntities)
-        {
-
-        }
-   
+  
         public void SetCoords(double width, double height)
         {
             foreach (var item in substationEntities)
@@ -108,9 +115,12 @@ namespace RG_PZ2.Service
                 element.ToolTip = "ID:" + item.Id + "\nSubstation" + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
 
-                Canvas.SetLeft(element, item.X);
-                Canvas.SetTop(element, item.Y);
+                Canvas.SetLeft(element, item.X+2);
+                Canvas.SetTop(element, item.Y + 2);
+
+                item.shape = element;
                 myCanvas.Children.Add(element);
+                MyPowerEntity.Add(item);
             }
         }
         void DrawNode(Canvas myCanvas, MouseButtonEventHandler del)
@@ -121,9 +131,12 @@ namespace RG_PZ2.Service
                 element.ToolTip = "ID:" + item.Id + "\nNode " + "\nName:" + item.Name;
                 element.MouseLeftButtonDown += del;
 
-                Canvas.SetLeft(element, item.X);
-                Canvas.SetTop(element, item.Y);
+                Canvas.SetLeft(element, item.X + 2);
+                Canvas.SetTop(element, item.Y + 2);
+
+                item.shape = element;
                 myCanvas.Children.Add(element);
+                MyPowerEntity.Add(item);
             }
         }
 
@@ -135,10 +148,45 @@ namespace RG_PZ2.Service
                 element.ToolTip = "ID: " + item.Id + "\nSwitch " + "\nName: " + item.Name + "\nStatus: " + item.Status;
                 element.MouseLeftButtonDown += del;
 
-                Canvas.SetLeft(element, item.X);
-                Canvas.SetTop(element, item.Y);
-                  myCanvas.Children.Add(element);
+                Canvas.SetLeft(element, item.X +2);
+                Canvas.SetTop(element, item.Y +  2);
+
+                item.shape = element;
+                myCanvas.Children.Add(element);
+                MyPowerEntity.Add(item);
             }
+        }
+        void DrawLine(Canvas myCanvas)
+        {
+            foreach (var item in lineEntities)
+            {
+                var element = new Line() { Stroke = Brushes.Black };
+                (element.X1, element.Y1) = FindElemt(item.FirstEnd);
+                (element.X2, element.Y2) = FindElemt(item.SecondEnd);
+                if (element.X1 == 0 || element.X2 == 0 || element.Y1 == 0 || element.Y2 == 0)//stavljeno zbog problema ili baga, javlja se odredjen broj linija koje krecu iz  gornjeg desnog ugla i spajaju se sa par tacaka
+
+                {
+                    continue;
+                }
+                if (Math.Abs((element.X1 - element.X2)) < 3800 || Math.Abs((element.Y1 - element.Y2)) < 3800)
+                {
+                    var lines = map.createLine(element.X1, element.Y1, element.X2, element.Y2, 0);//bes secenja drugih putanja
+
+                    if (lines.Count < 2)
+                    {
+                        lines = map.createLine(element.X1, element.Y1, element.X2, element.Y2, 1);//sa secenjem drugih putanja
+                    }
+                    if (lines.Count > 2)
+                    {
+                        CreateLine(lines, myCanvas, FindConcreteElemt(item.FirstEnd), FindConcreteElemt(item.SecondEnd), item);
+
+                    }
+                }
+            }
+        }
+        void DrawCrossing(Canvas myCanvas)
+        {
+            map.DrawCrossing(myCanvas);
         }
         public void DrawElements( Canvas myCanvas, MouseButtonEventHandler del)
         {
@@ -146,39 +194,55 @@ namespace RG_PZ2.Service
             DrawSubstation(myCanvas,del);
             DrawNode(myCanvas,del);
             DrawSwithc(myCanvas,del);
-              foreach (var item in lineEntities)
-              {
-                  var element = new Line() { Stroke = Brushes.Black };
-                  (element.X1, element.Y1) = FindElemt(item.FirstEnd);
-                  (element.X2, element.Y2) = FindElemt(item.SecondEnd);
-                  if (element.X1 == 0 || element.X2 == 0 || element.Y1 == 0 || element.Y2 == 0)//stavljeno zbog problema ili baga, javlja se odredjen broj linija koje krecu iz  gornjeg desnog ugla i spajaju se sa par tacaka
-                    
-                  {
-                      continue;
-                  }
-                //  myCanvas.Children.Add(element);
-               var lines= map.createLine(element.X1, element.Y1, element.X2, element.Y2);
-                if(lines.Count>10 && lines.Count < 15)
-                {
-                    CreateLine(lines, myCanvas);
-                   
-                }
-           
-              }
-        }
-        void CreateLine(List<Cell> lines, Canvas myCanvas)
-        {
+            DrawLine(myCanvas);
+            DrawCrossing(myCanvas);
+            
 
-            for(int i=0; i<lines.Count;i++)
+
+        }
+       
+        void CreateLine(List<Cell> lines, Canvas myCanvas, PowerEntity first, PowerEntity sec, LineEntity line)
+        {
+            Polyline tempPolyLine = new Polyline();
+            tempPolyLine.Stroke = new SolidColorBrush(Colors.SaddleBrown);
+            tempPolyLine.StrokeThickness = 1;
+       
+            for (int i=0; i<lines.Count;i++)
             {
-                Ellipse temp = new Ellipse() {  Width = 2, Height = 10, Fill = Brushes.Black };
-                Canvas.SetLeft(temp, lines[i].X_Coord);
-                Canvas.SetTop(temp, lines[i].Y_Coord);
-                myCanvas.Children.Add(temp);
-             
+                Space current= Space.FREE;
+                if( i< lines.Count-1)
+                {
+                    if (lines[i].X_Coord != lines[i + 1].X_Coord && lines[i].Y_Coord != lines[i + 1].Y_Coord)
+                    {
+                        current = Space.LINE_CORNER;
+
+                    }
+                    else if (lines[i].X_Coord != lines[i + 1].X_Coord)
+                    {
+                        current = Space.LINE_HORIZONTAL;
+                    }
+                    else if (lines[i].Y_Coord != lines[i + 1].Y_Coord)
+                    {
+                        current = Space.LINE_VERICAL;
+                    }
+                    SetMarkOnMap(lines[i].X_Coord, lines[i].Y_Coord, current);
+                }
+                System.Windows.Point point = new System.Windows.Point(lines[i].X_Coord+5, lines[i].Y_Coord+5);
+                tempPolyLine.Points.Add(point);
+                tempPolyLine.MouseRightButtonDown += SetDefault;
+                tempPolyLine.MouseRightButtonDown += first.ClickFunction;
+                tempPolyLine.MouseRightButtonDown += sec.ClickFunction;
+                tempPolyLine.ToolTip = "Power line\n" + "ID: " + line.Id + "\nName: " + line.Name + "\nTyle: " + line.LineType + "\nConductor material: " + line.ConductorMaterial + "\nUnderground: " + line.IsUnderground.ToString();
             }
 
-            
+            myCanvas.Children.Add(tempPolyLine);
+        }
+        void SetMarkOnMap(double xcoord, double ycoord, Space current)
+        {
+            if (current == Space.FREE)
+                return;
+            map.SetMarkOnMap(xcoord, ycoord, current);
+
         }
       private (double, double) FindElemt(long id)
          {
@@ -188,6 +252,33 @@ namespace RG_PZ2.Service
                ? (nodeEntities.Find((item) => item.Id == id).X , nodeEntities.Find((item) => item.Id == id).Y )
                : switchEntities.Find((item) => item.Id == id) != null
                ? (switchEntities.Find((item) => item.Id == id).X , switchEntities.Find((item) => item.Id == id).Y ) : (0, 0);
-              }
+        }
+        private PowerEntity FindConcreteElemt(long id)
+        {
+            foreach(var item in substationEntities)
+                {
+                    if(item.Id==id)
+                    {
+                        return item;
+                    }
+                }
+        
+              foreach(var item in nodeEntities)
+                {
+                    if(item.Id==id)
+                    {
+                        return item;
+                    }
+             }
+              foreach(var item in switchEntities)
+                {
+                    if(item.Id==id)
+                    {
+                        return item;
+                    }
+                }
+            return null;
+         }
+        
     }
 }
