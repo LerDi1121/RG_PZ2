@@ -204,7 +204,7 @@ namespace RG_PZ2.Service
         void CreateLine(List<Cell> lines, Canvas myCanvas, PowerEntity first, PowerEntity sec, LineEntity line)
         {
             Polyline tempPolyLine = new Polyline();
-            tempPolyLine.Stroke = new SolidColorBrush(Colors.SaddleBrown);
+            tempPolyLine.Stroke = new SolidColorBrush(Colors.Black);
             tempPolyLine.StrokeThickness = 1;
        
             for (int i=0; i<lines.Count;i++)
