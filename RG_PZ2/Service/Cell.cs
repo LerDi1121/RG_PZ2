@@ -9,7 +9,7 @@ using System.Windows.Shapes;
 
 namespace RG_PZ2.Service
 {
-    public enum Space { FREE, NODE, LINE_HORIZONTAL, LINE_VERICAL, LINE, CROSSING , LINE_CORNER, LINE_X}
+    public enum Space { FREE, NODE, LINE_HORIZONTAL, LINE_VERICAL, LINE, LINE_CORNER, LINE_X}
     class Cell
     {
 

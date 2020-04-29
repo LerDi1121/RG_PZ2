@@ -22,10 +22,8 @@ namespace RG_PZ2.Service
         {
             Cells = new Cell[X, Y];
         }
-      
         public void AddElement(  double XCoord, double YCoord, Space spc)
-        {
-           
+        {         
             for(int x =0; x<NumY; x++)
             {
                 if(XCoord == Cells[x,0].X_Coord)
@@ -34,10 +32,8 @@ namespace RG_PZ2.Service
                     {
                         if (YCoord == Cells[x, y].Y_Coord)
                         {
-                            Cells[x, y].Space_ = spc;
-                       
-                            break;
-                            
+                            Cells[x, y].Space_ = spc;    
+                            break;                         
                          }
                     }
                 }
@@ -53,7 +49,6 @@ namespace RG_PZ2.Service
                 }
             }
             return -1;
-
         }
         private int findColumn(double yCoord)
         {
@@ -65,7 +60,6 @@ namespace RG_PZ2.Service
                 }
             }
             return -1;
-
         }
         bool isEnd(int x, int y, Cell End)
         {
@@ -144,10 +138,7 @@ namespace RG_PZ2.Service
             {
                 Cells[x, y].Space_ = Space.LINE;
             }
-            else if(Cells[x, y].Space_ == Space.LINE)
-            {
-                Cells[x, y].Space_ = Space.CROSSING; 
-            }
+        
         }
         private bool compareCell(Cell first, Cell sec)
         {
@@ -165,7 +156,7 @@ namespace RG_PZ2.Service
                         {
                             if (Cells[x, y].Space_ == Space.NODE)
                                 return;
-                            if (Cells[x, y].Space_ == Space.LINE || Cells[x, y].Space_ == Space.CROSSING || Cells[x, y].Space_ == Space.FREE)
+                            if (Cells[x, y].Space_ == Space.LINE || Cells[x, y].Space_ == Space.FREE)
                                 Cells[x, y].Space_ = current;
                             else if (Cells[x, y].Space_ != current)
                                 Cells[x, y].Space_ = Space.LINE_X;

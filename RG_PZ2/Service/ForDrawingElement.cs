@@ -164,7 +164,6 @@ namespace RG_PZ2.Service
                 (element.X1, element.Y1) = FindElemt(item.FirstEnd);
                 (element.X2, element.Y2) = FindElemt(item.SecondEnd);
                 if (element.X1 == 0 || element.X2 == 0 || element.Y1 == 0 || element.Y2 == 0)//stavljeno zbog problema ili baga, javlja se odredjen broj linija koje krecu iz  gornjeg desnog ugla i spajaju se sa par tacaka
-
                 {
                     continue;
                 }
@@ -179,7 +178,6 @@ namespace RG_PZ2.Service
                     if (lines.Count > 2)
                     {
                         CreateLine(lines, myCanvas, FindConcreteElemt(item.FirstEnd), FindConcreteElemt(item.SecondEnd), item);
-
                     }
                 }
             }
@@ -190,15 +188,11 @@ namespace RG_PZ2.Service
         }
         public void DrawElements( Canvas myCanvas, MouseButtonEventHandler del)
         {
-
             DrawSubstation(myCanvas,del);
             DrawNode(myCanvas,del);
             DrawSwithc(myCanvas,del);
             DrawLine(myCanvas);
             DrawCrossing(myCanvas);
-            
-
-
         }
        
         void CreateLine(List<Cell> lines, Canvas myCanvas, PowerEntity first, PowerEntity sec, LineEntity line)
@@ -215,7 +209,7 @@ namespace RG_PZ2.Service
                     if (lines[i].X_Coord != lines[i + 1].X_Coord && lines[i].Y_Coord != lines[i + 1].Y_Coord)
                     {
                         current = Space.LINE_CORNER;
-
+                        //ne znam da li radi 
                     }
                     else if (lines[i].X_Coord != lines[i + 1].X_Coord)
                     {
@@ -234,7 +228,6 @@ namespace RG_PZ2.Service
                 tempPolyLine.MouseRightButtonDown += sec.ClickFunction;
                 tempPolyLine.ToolTip = "Power line\n" + "ID: " + line.Id + "\nName: " + line.Name + "\nTyle: " + line.LineType + "\nConductor material: " + line.ConductorMaterial + "\nUnderground: " + line.IsUnderground.ToString();
             }
-
             myCanvas.Children.Add(tempPolyLine);
         }
         void SetMarkOnMap(double xcoord, double ycoord, Space current)
@@ -242,7 +235,6 @@ namespace RG_PZ2.Service
             if (current == Space.FREE)
                 return;
             map.SetMarkOnMap(xcoord, ycoord, current);
-
         }
       private (double, double) FindElemt(long id)
          {
@@ -256,29 +248,29 @@ namespace RG_PZ2.Service
         private PowerEntity FindConcreteElemt(long id)
         {
             foreach(var item in substationEntities)
-                {
+            {
                     if(item.Id==id)
                     {
                         return item;
                     }
-                }
+            }
         
               foreach(var item in nodeEntities)
-                {
+              {
                     if(item.Id==id)
                     {
                         return item;
                     }
-             }
+              }
+
               foreach(var item in switchEntities)
-                {
+              {
                     if(item.Id==id)
                     {
                         return item;
                     }
-                }
+              }
             return null;
-         }
-        
+         }   
     }
 }

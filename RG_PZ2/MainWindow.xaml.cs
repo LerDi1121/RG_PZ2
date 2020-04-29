@@ -25,15 +25,10 @@ namespace RG_PZ2
     /// </summary>
     public partial class MainWindow : Window
     {
-       /* public  delegate void CanvasAddDelegate(UIElement element);
-        public static CanvasAddDelegate CanvasAddDel;*/
-        private ForDrawingElement forDrawingElement = new ForDrawingElement();
+       private ForDrawingElement forDrawingElement = new ForDrawingElement();
 
-     
         public MainWindow()
         {
-         //   CanvasAddDel += CanvasAdd;
-      
             InitializeComponent();
             forDrawingElement.LoadXml();
             forDrawingElement.SetScale(canvas.Width,canvas.Height);
@@ -41,43 +36,29 @@ namespace RG_PZ2
             forDrawingElement.DrawElements( canvas, EllipseMousedown);
         }
     
-  
-        
+
         public void EllipseMousedown(object sender, MouseButtonEventArgs e)
         {
+            Ellipse temp = (Ellipse)e.Source;
+            ScaleTransform scale = new ScaleTransform();
 
+            scale.CenterX =3;
+            scale.CenterY = 3;
 
-            slider.Value = 1;
-            Storyboard storyboardh = new Storyboard();
-            Storyboard storyboardv = new Storyboard();
-
-            ScaleTransform scale = new ScaleTransform(1, 1);
-
-            scale.CenterX = Canvas.GetLeft((Ellipse)sender);
-            scale.CenterY = Canvas.GetTop((Ellipse)sender);
-
-            canvas.RenderTransform = scale;
+            temp.RenderTransform = scale;
 
             double startNum = 1;
             double endNum = 10;
 
             DoubleAnimation growAnimation = new DoubleAnimation();
-            growAnimation.Duration = TimeSpan.FromSeconds(2);
+            growAnimation.Duration = TimeSpan.FromSeconds(5);
             growAnimation.From = startNum;
             growAnimation.To = endNum;
             growAnimation.AutoReverse = true;
-            storyboardh.Children.Add(growAnimation);
-            storyboardv.Children.Add(growAnimation);
+            temp.RenderTransform = scale;
 
-            Storyboard.SetTargetProperty(growAnimation, new PropertyPath("RenderTransform.ScaleX"));
-            Storyboard.SetTarget(growAnimation, canvas);
-            storyboardh.Begin();
-
-            Storyboard.SetTargetProperty(growAnimation, new PropertyPath("RenderTransform.ScaleY"));
-            Storyboard.SetTarget(growAnimation, canvas);
-            storyboardv.Begin();
-
-
+            scale.BeginAnimation(ScaleTransform.ScaleXProperty, growAnimation);
+            scale.BeginAnimation(ScaleTransform.ScaleYProperty, growAnimation);
 
         }
   

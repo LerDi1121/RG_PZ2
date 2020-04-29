@@ -9,18 +9,33 @@
         Title="MainWindow" Height="450" Width="800">
     <DockPanel>
         <Slider x:Name="slider" Minimum=".1" Maximum="10" Value="1" DockPanel.Dock="Top"/>
+        <DockPanel> </DockPanel>
         <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
             <Border BorderBrush="Black" BorderThickness="1" HorizontalAlignment="Center" VerticalAlignment="Center">
+                
                 <Canvas Width="4000" Height="4000" Name="canvas" Background="WhiteSmoke">
                     <Canvas.LayoutTransform>
                         <ScaleTransform ScaleX="{Binding ElementName=slider, Path=Value}"
                                 ScaleY="{Binding ElementName=slider, Path=Value}"/>
                     </Canvas.LayoutTransform>
-                 
-                    
+
+                    <Ellipse Canvas.Left="10" Canvas.Top="10" Width="15" Height="15"
+                        Stroke="Black" StrokeThickness="1" Fill="HotPink"/>
+                    <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Width="72" Height="35"   Content="Substation" Canvas.Left="30" Canvas.Top="3"/>
+                    <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Width="72" Height="35"  Content="Node" Canvas.Left="30" Canvas.Top="23"/>
+                    <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Width="72" Height="35"  Content="Switch" Canvas.Left="30" Canvas.Top="43"/>
+                    <Label  HorizontalAlignment="Left" VerticalAlignment="Top" Width="72" Height="35"  Content="Line" Canvas.Left="30" Canvas.Top="63"/>
+
+                    <Ellipse Canvas.Left="10" Canvas.Top="30" Width="15" Height="15"
+                        Stroke="Black" StrokeThickness="1" Fill="DeepSkyBlue"/>
+                    <Ellipse Canvas.Left="10" Canvas.Top="50" Width="15" Height="15"
+                        Stroke="Black" StrokeThickness="1" Fill="ForestGreen"/>
+                    <Line Canvas.Left="10" Canvas.Top="77" X1="0" X2="15" Y1="0" Y2="0" 
+                    Stroke="Black" StrokeThickness="2"/>
                 </Canvas>
             </Border>
         </ScrollViewer>
     </DockPanel>
-   
+    
+
 </Window>
